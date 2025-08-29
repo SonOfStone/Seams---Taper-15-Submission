@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Title (Taper #15)</title>
+
+<!-- “Title” Copyright (C) 2025 Author
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright 
+notice and this notice are preserved. This file is offered as-is,
+without any warranty.
+
+This is from Taper #15: Crossroads, Fall 2025:
+
+https://taper.badquar.to/15/title_of_your_work.html
+
+... your creative statement here ...
+
+*** BEGIN TEMPLATE INSTRUCTIONS ***
+* All poem code goes between the closing header and closing body tags
+below, and must not exceed 2KB (2048 bytes).
+* Without removing any template punctuation, insert your author name,
+poem title, and poem filename throughout the template, making sure your
+text, capitalization, and punctuation is consistent across the file.
+* Insert your creative statement above, wrapped to 72 characters, and 
+using typographical quotes “” and apostrophes ‘’.
+* Do not modify the template in any other way.
+*** END TEMPLATE INSTRUCTIONS ***
+
+-->
+
+<style>
+	body { margin:0 ; overflow:hidden }
+	a { color:#eee ; text-decoration:none }
+	header { margin:0 ; padding:0 ; background-color:#444 ; color:#bbb ;
+		position:relative ; z-index:1000 }
+	header > h1 { margin:0 ; font-size:12px ; font-family:sans-serif ;
+		border-bottom:1px #999 solid ; padding:5px 10px ; line-height:17px }
+</style>
+
+</head>
+<body>
+<header id=nav>
+	<h1>
+		<a href="prev.html">&lt;&lt;</a> &nbsp; 
+		<a href="index.html">Taper #15 :
+		Crossroads</a> : Fall 2025 &nbsp; 
+		<a href="next.html">&gt;&gt;</a><br>
+		<a href="title_of_your_work.html">“Title”</a> by
+		<a href="about.html#authorlastname">Author</a>
+	</h1>
+</header>
+
+<canvas id="c"style="background-color:#222"></canvas>
+<script>
+var c = document.getElementById('c');
+var x = c.getContext('2d');
+let a, b, r, br, s, iw, ih;
+var g = 0.4;
+
+function rc() {
+    return `hsl(${Math.random() * 360},90%,60%)`;
+}
+
+let bs = [
+    { x: 0, y: 0, vx: 0, vy: 0, c: rc() }
+];
+
+sp = 0;
+v = 0.95;
+
+c.addEventListener('pointermove', function(e) {
+    var q = c.getBoundingClientRect();
+    var mx = e.clientX - q.left;
+    var my = e.clientY - q.top;
+    sp = Math.atan2(my - b, mx - a);
+});
+
+c.addEventListener('pointerdown', function(e) {
+    if (e.button == 0) v = 1.05;
+    e.preventDefault();
+});
+c.addEventListener('pointerup', function(e) {
+    if (e.button == 0) v = 0.95;
+    e.preventDefault();
+});
+
+function rz() {
+    iw = window.innerWidth;
+    ih = window.innerHeight;
+    s = Math.min(iw, ih);
+    c.width = iw;
+    c.height = ih;
+    a = iw / 2;
+    b = ih * .4;
+    r = s * 0.33;
+    br = s * 0.02;
+}
+rz();
+window.addEventListener('resize', rz);
+
+function pt() {
+    ls = [
+    "You will burst at the seams with success",
+    "And you push with effort",
+    "But if your goals align with opportunity",
+    "We have to fail to see growth"
+    ];
+    x.save();
+    x.font = `${c.height * 0.02}px sans-serif`;
+    x.textAlign = "center";
+    lh = c.height * 0.08;
+    sy = b - (lh * 1.5);
+    x.globalCompositeOperation = "destination-out";
+    for (let i = 0; i < ls.length; i++) {
+        x.fillText(ls[i], a, sy + i * lh);
+    }
+    x.globalCompositeOperation = "source-over";
+    x.restore();
+}
+
+function cg() {
+    x.save();
+    x.translate(a, b);
+    x.rotate(sp);
+    x.beginPath();
+    x.strokeStyle = "#FFF";
+    x.lineWidth = 8;
+    x.arc(0, 0, r, .52, 6.28);
+    x.stroke();
+    x.restore();
+}
+
+function db(b1) {
+    x.save();
+    x.beginPath();
+    x.arc(b1.x, b1.y, br, 0, 2*Math.PI);
+    x.fillStyle = b1.c;
+    x.fill();
+    x.restore();
+}
+
+function ub(b1) {
+    b1.vy += g;
+    b1.x += b1.vx;
+    b1.y += b1.vy;
+    var dx = b1.x - a;
+    var dy = b1.y - b;
+    var di = Math.sqrt(dx * dx + dy * dy);
+    if (di > r - br) {
+        let an = Math.atan2(dy, dx) - sp;
+        while (an < 0) an += 6.28;
+        var gs = 0;
+        var ge = .52;
+        if (!(an >= gs && an <= ge) && di < r + br) {
+            var nx = dx / di;
+            var ny = dy / di;
+            b1.x = a + nx * (r - br);
+            b1.y = b + ny * (r - br);
+            var vdn = b1.vx * nx + b1.vy * ny;
+            b1.vx -= 2 * vdn * nx;
+            b1.vy -= 2 * vdn * ny;
+            b1.vx *= v;
+            b1.vy *= v;
+        }
+    }
+}
+
+function lp() {
+    x.clearRect(0, 0, iw, ih);
+    cg();
+    for (var ba of bs) {
+        db(ba);
+        ub(ba);
+    }
+    pt();
+    nb = [];
+    bs = bs.filter(ba => {
+        if (ba.y - br > ih) {
+            for (let i = 0; i < 2; i++) {
+                nb.push({
+                    x: a,
+                    y: b,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: Math.random() * -6,
+                    c: rc()
+                });
+            }
+            return false;
+        }
+        return true;
+    });
+    for (var ba of nb) {
+        if (bs.length < 1000) bs.push(ba);
+        else break;
+    }
+    requestAnimationFrame(lp);
+}
+bs[0].x = iw / 2;
+bs[0].y = ih / 2;
+lp();
+</script>
+<!-- All poem code goes here, and must be less than or equal to 2048 bytes (not including closing </body> and </html> tags below)-->
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Title (Taper #15)</title>
+
+<!-- “Title” Copyright (C) 2025 Author
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright 
+notice and this notice are preserved. This file is offered as-is,
+without any warranty.
+
+This is from Taper #15: Crossroads, Fall 2025:
+
+https://taper.badquar.to/15/title_of_your_work.html
+
+... your creative statement here ...
+
+*** BEGIN TEMPLATE INSTRUCTIONS ***
+* All poem code goes between the closing header and closing body tags
+below, and must not exceed 2KB (2048 bytes).
+* Without removing any template punctuation, insert your author name,
+poem title, and poem filename throughout the template, making sure your
+text, capitalization, and punctuation is consistent across the file.
+* Insert your creative statement above, wrapped to 72 characters, and 
+using typographical quotes “” and apostrophes ‘’.
+* Do not modify the template in any other way.
+*** END TEMPLATE INSTRUCTIONS ***
+
+-->
+
+<style>
+	body { margin:0 ; overflow:hidden }
+	a { color:#eee ; text-decoration:none }
+	header { margin:0 ; padding:0 ; background-color:#444 ; color:#bbb ;
+		position:relative ; z-index:1000 }
+	header > h1 { margin:0 ; font-size:12px ; font-family:sans-serif ;
+		border-bottom:1px #999 solid ; padding:5px 10px ; line-height:17px }
+</style>
+
+</head>
+<body>
+<header id=nav>
+	<h1>
+		<a href="prev.html">&lt;&lt;</a> &nbsp; 
+		<a href="index.html">Taper #15 :
+		Crossroads</a> : Fall 2025 &nbsp; 
+		<a href="next.html">&gt;&gt;</a><br>
+		<a href="title_of_your_work.html">“Title”</a> by
+		<a href="about.html#authorlastname">Author</a>
+	</h1>
+</header>
+<style>
+    body {background-color: #222}
+</style>
+<canvas id="circleCanvas"></canvas>
+<script>
+    const canvas = document.getElementById('circleCanvas');
+    const ctx = canvas.getContext('2d');
+    let cx, cy, radius, ballRadius,size;
+    const gapAngle = 30 * Math.PI / 180; // 30 degrees in radians
+    const gravity = 0.4;
+
+    function randomColor() {
+        return `hsl(${Math.floor(Math.random() * 360)},90%,60%)`;
+    }
+
+    let balls = [
+        { x: 0, y: 0, vx: 0, vy: 0, color: randomColor() }
+    ];
+
+    let spin = 0;
+    let velocity = 0.95; // Damping factor for ball velocity
+
+    // Add mousemove event to update spin based on mouse position
+    canvas.addEventListener('pointermove', function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        spin = Math.atan2(my - cy, mx - cx);
+    });
+
+    // Add mousedown event to set all ball.vx and ball.vy to -0.99 on left click
+    canvas.addEventListener('pointerdown', function(e) {
+        if (e.button === 0) { // Left mouse button
+            velocity = 1.05;
+        }
+        e.preventDefault(); // Prevent selection
+    });
+
+    canvas.addEventListener('pointerup', function(e) {
+        if (e.button === 0) { // Left mouse button
+            velocity = 0.95;
+        }
+        e.preventDefault(); // Prevent selection
+    }); 
+
+    function resizeCanvas() {
+        size = Math.min(window.innerWidth, window.innerHeight);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        cx = canvas.width / 2;
+        cy = canvas.height *.4;
+        radius = size * 0.3;
+        ballRadius = Math.max(10, size * 0.02);
+
+        // Move all balls to the new center if they are out of bounds
+        for (const ball of balls) {
+            ball.x = cx;
+            ball.y = cy;
+        }
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function drawPoemTextMask() {
+    // Poem lines
+    const lines = [
+        "You will burst at the seams with success",
+        "And you push with effort",
+        "But if your goals align with opportunity",
+        "We have to fail to see growth"
+    ];
+    // Text settings
+    ctx.save();
+    ctx.font = `${Math.floor(canvas.height * 0.02)}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    // Positioning
+    const lineHeight = canvas.height * 0.08;
+    const startY = cy - (lineHeight * 1.5);
+
+    // Draw each line as a mask (destination-out removes from balls)
+    ctx.globalCompositeOperation = "destination-out";
+    for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], cx, startY + i * lineHeight);
+    }
+    ctx.globalCompositeOperation = "source-over";
+    ctx.restore();
+}
+
+    function drawCircle() {
+        ctx.save();
+        ctx.translate(cx, cy);
+    }
+
+    function drawCircleWithGap() {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(spin);
+        ctx.beginPath();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 8;
+        ctx.arc(
+            0, 0, radius,
+            gapAngle, // start angle
+            2*Math.PI // end angle
+        );
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    function drawBall(ball) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ballRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = ball.color;
+        ctx.shadowColor = ball.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function updateBall(ball) {
+      ball.vy += gravity;
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      // Collision with spinning circle (except in the gap)
+      const dx = ball.x - cx;
+      const dy = ball.y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > radius - ballRadius) {
+        // Calculate angle relative to spinning circle
+        let angle = Math.atan2(dy, dx) - spin;
+        while (angle < 0) angle += 2 * Math.PI;
+        // Gap is centered at the right (0 radians), adjust by a few degrees if needed
+        const gapCenter = gapAngle / 2;
+        const gapStart = gapCenter - gapAngle / 2;
+        const gapEnd = gapCenter + gapAngle / 2;
+
+        // Only bounce if not in the gap
+        if (!(angle >= gapStart && angle <= gapEnd) && dist < radius + ballRadius) {
+          // Move ball back to edge
+          const nx = dx / dist;
+          const ny = dy / dist;
+          ball.x = cx + nx * (radius - ballRadius);
+          ball.y = cy + ny * (radius - ballRadius);
+
+          // Reflect velocity
+          const vDotN = ball.vx * nx + ball.vy * ny;
+          ball.vx -= 2 * vDotN * nx;
+          ball.vy -= 2 * vDotN * ny;
+
+          // Dampen velocity to simulate energy loss
+          ball.vx *= velocity;
+          ball.vy *= velocity;
+        }
+      }
+    }
+
+    function loop() {
+    // Update responsive values
+    cx = canvas.width / 2;
+    cy = canvas.height *.4;
+    radius = size * 0.3;
+    ballRadius = Math.max(10, size * 0.02);
+    // spin is now set by mouse, so remove spin += 0.01;
+    //
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawCircleWithGap();
+
+    for (const ball of balls) {
+        drawBall(ball);
+        updateBall(ball);
+    }
+
+    drawPoemTextMask();
+
+
+    // Only replicate balls that fall out of the canvas (not just through the gap)
+    let newBalls = [];
+    balls = balls.filter(ball => {
+        if (ball.y - ballRadius > canvas.height) {
+            // Replicate: spawn 2 new balls at center with random color and velocity
+            for (let i = 0; i < 2; i++) {
+                if (balls.length + newBalls.length < 1000) {
+                    newBalls.push({
+                        x: cx,
+                        y: cy,
+                        vx: (Math.random() - 0.5) * 8,
+                        vy: Math.random() * -6,
+                        color: randomColor()
+                    });
+                }
+            }
+            return false;
+        }
+        return true;
+    });
+
+    // Add new balls to the simulation, but cap total at 255
+    for (const ball of newBalls) {
+        if (balls.length < 1000) {
+            balls.push(ball);
+        } else {
+            break;
+        }
+    }
+
+    requestAnimationFrame(loop);
+}
+    // Initialize first ball at center after canvas is sized
+    balls[0].x = canvas.width / 2;
+    balls[0].y = canvas.height / 2;
+
+    loop();
+</script>
+<!-- All poem code goes here, and must be less than or equal to 2048 bytes (not including closing </body> and </html> tags below)-->
+</body>
+</html>

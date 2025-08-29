@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Seams (Taper #15)</title>
+
+<!-- “Seams” Copyright (C) 2025 Wayne Brinson
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. This file is offered as-is,
+without any warranty.
+
+This is from Taper #15: Crossroads, Fall 2025:
+
+https://taper.badquar.to/15/seams.html
+
+Seams is a visual representation about growing through your failures
+and the implication of exponential growth when you can look back and
+note each of those experiences. Eventually, you can't help but 
+accomplish what you were setting out to do.
+
+-->
+
+<style>
+	body { margin:0 ; overflow:hidden }
+	a { color:#eee ; text-decoration:none }
+	header { margin:0 ; padding:0 ; background-color:#444 ; color:#bbb ;
+		position:relative ; z-index:1000 }
+	header > h1 { margin:0 ; font-size:12px ; font-family:sans-serif ;
+		border-bottom:1px #999 solid ; padding:5px 10px ; line-height:17px }
+</style>
+</head>
+<body>
+<header id=nav>
+	<h1>
+		<a href="prev.html">&lt;&lt;</a> &nbsp; 
+		<a href="index.html">Taper #15 :
+		Crossroads</a> : Fall 2025 &nbsp; 
+		<a href="next.html">&gt;&gt;</a><br>
+		<a href="seams.html">“Seams”</a> by
+		<a href="about.html#brinson">Wayne Brinson</a>
+	</h1>
+</header>
+<canvas id="c"style="background-color:#222"></canvas>
+<script>
+var c=document.getElementById("c"),x=c.getContext("2d");let a,b,r,br,s,iw,ih;var g=.4;function rc(){return`hsl(${360*Math.random()},90%,60%)`}let bs=[{x:0,y:0,vx:0,vy:0,c:rc()}];function rz(){iw=window.innerWidth,ih=window.innerHeight,s=Math.min(iw,ih),c.width=iw,c.height=ih,a=iw/2,b=.4*ih,r=.33*s,br=.02*s}function pt(){ls=["You will burst at the seams","And you push with effort","But if your goals align with opportunity","We have to fail to see growth"],x.save(),x.font=.02*c.height+"px sans-serif",x.textAlign="center",lh=.08*c.height,sy=b-1.5*lh,x.globalCompositeOperation="destination-out";for(let t=0;t<ls.length;t++)x.fillText(ls[t],a,sy+t*lh);x.globalCompositeOperation="source-over",x.restore()}function cg(){x.save(),x.translate(a,b),x.rotate(sp),x.beginPath(),x.strokeStyle="#FFF",x.lineWidth=8,x.arc(0,0,r,.52,6.28),x.stroke(),x.restore()}function db(t){x.save(),x.beginPath(),x.arc(t.x,t.y,br,0,2*Math.PI),x.fillStyle=t.c,x.fill(),x.restore()}function ub(t){t.vy+=g,t.x+=t.vx,t.y+=t.vy;var e=t.x-a,n=t.y-b,i=Math.sqrt(e*e+n*n);if(i>r-br){let h=Math.atan2(n,e)-sp;for(;h<0;)h+=6.28;if(!(h>=0&&h<=.52)&&i<r+br){var o=e/i,s=n/i;t.x=a+o*(r-br),t.y=b+s*(r-br);var l=t.vx*o+t.vy*s;t.vx-=2*l*o,t.vy-=2*l*s,t.vx*=v,t.vy*=v}}}function lp(){for(var t of(x.clearRect(0,0,iw,ih),cg(),bs))db(t),ub(t);for(var t of(pt(),nb=[],bs=bs.filter((t=>{if(t.y-br>ih){for(let t=0;t<2;t++)nb.push({x:a,y:b,vx:8*(Math.random()-.5),vy:-6*Math.random(),c:rc()});return!1}return!0})),nb)){if(!(bs.length<1e3))break;bs.push(t)}requestAnimationFrame(lp)}sp=0,v=.95,c.addEventListener("pointermove",(function(t){var e=c.getBoundingClientRect(),r=t.clientX-e.left,n=t.clientY-e.top;sp=Math.atan2(n-b,r-a)})),c.addEventListener("pointerdown",(function(t){0==t.button&&(v=1.05),t.preventDefault()})),c.addEventListener("pointerup",(function(t){0==t.button&&(v=.95),t.preventDefault()})),rz(),window.addEventListener("resize",rz),bs[0].x=iw/2,bs[0].y=ih/2,lp();
+</script>
+</body>
+</html>
